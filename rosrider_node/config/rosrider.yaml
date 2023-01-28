@@ -1,0 +1,14 @@
+diff_drive:
+  ros__parameters:
+    I2C_ENABLED: False
+    UPDATE_RATE: 10
+    WHEEL_DIA: 0.0685
+    BASE_WIDTH: 0.1
+    MAX_RPM: 90.0
+odometry_publisher:
+  ros__parameters:
+    I2C_ENABLED: False
+    UPDATE_RATE: 10
+    WHEEL_DIA: 0.0685
+    BASE_WIDTH: 0.1
+    MAX_RPM: 90.0

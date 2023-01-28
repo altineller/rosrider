@@ -18,7 +18,7 @@ class PidTuneService(Node):
 
         self.srv_pidctl = self.create_service(PidCtl, 'rosrider/pidctl', self.pid_callback)
 
-        self.declare_parameter('I2C_ENABLED', False)
+        self.declare_parameter('I2C_ENABLED', True)
         self.I2C_ENABLED = self.get_parameter('I2C_ENABLED').get_parameter_value().bool_value
 
     def pid_callback(self, request, response):

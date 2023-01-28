@@ -17,7 +17,7 @@ class SetFloatService(Node):
 
         self.srv_setfloat = self.create_service(SetFloat, 'rosrider/setfloat', self.setfloat_callback)
 
-        self.declare_parameter('I2C_ENABLED', False)
+        self.declare_parameter('I2C_ENABLED', True)
         self.I2C_ENABLED = self.get_parameter('I2C_ENABLED').get_parameter_value().bool_value
 
     def setfloat_callback(self, request, response):

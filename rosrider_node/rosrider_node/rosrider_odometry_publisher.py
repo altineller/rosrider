@@ -28,19 +28,34 @@ cs_left = cs_left_raw * (6.6 / 4095)  # 500mV/A
 cs_right = cs_right_raw * (6.6 / 4095)  # 500mV/A
 '''
 
+
+def quaternion_from_euler(ai, aj, ak):
+    ai /= 2.0
+    aj /= 2.0
+    ak /= 2.0
+    ci = math.cos(ai)
+    si = math.sin(ai)
+    cj = math.cos(aj)
+    sj = math.sin(aj)
+    ck = math.cos(ak)
+    sk = math.sin(ak)
+    cc = ci * ck
+    cs = ci * sk
+    sc = si * ck
+    ss = si * sk
+    q = [0] * 4
+    q[0] = cj * sc - sj * cs
+    q[1] = cj * ss + sj * cc
+    q[2] = cj * cs - sj * sc
+    q[3] = cj * cc + sj * ss
+    return q
+
+
 class OdometryPublisher(Node):
 
     def __init__(self):
 
         super().__init__('odometry_publisher')
-
-        self.odomPub = self.create_publisher(Odometry, '/odometry', 10)
-
-        # TODO make optional
-        self.jointPub = self.create_publisher(JointState, '/joint_states', 10)
-
-        # TODO: make optional
-        self.tf_broadcaster = TransformBroadcaster(self)
 
         self.declare_parameters(
             namespace='',
@@ -53,7 +68,10 @@ class OdometryPublisher(Node):
                 ('ENCODER_PPR', 48),
                 ('GEAR_RATIO', 65.0),
                 ('ODOM_FRAME_ID', 'odom'),
-                ('BASE_FRAME_ID', 'base_footprint')
+                ('BASE_FRAME_ID', 'base_footprint'),
+                ('BROADCAST_TF2', True),
+                ('PUB_ODOMETRY', True),
+                ('PUB_JOINTS', True)
             ])
 
         self.I2C_ENABLED = self.get_parameter('I2C_ENABLED').value
@@ -65,11 +83,21 @@ class OdometryPublisher(Node):
         self.GEAR_RATIO = self.get_parameter('GEAR_RATIO').value
         self.ODOM_FRAME_ID = self.get_parameter('ODOM_FRAME_ID').value
         self.BASE_FRAME_ID = self.get_parameter('BASE_FRAME_ID').value
+        self.BROADCAST_TF2 = self.get_parameter('BROADCAST_TF2').value
+        self.PUB_ODOMETRY = self.get_parameter('PUB_ODOMETRY').value
+        self.PUB_JOINTS = self.get_parameter('PUB_JOINTS').value  # TODO: joint data should be sent over tf2
 
-        # TODO
-        self.BROADCAST_TF = True
-        self.PUB_ODOMETRY = True
-        self.PUB_JOINTS = True # maybe
+        self.odomPub = None
+        if self.PUB_ODOMETRY:
+            self.odomPub = self.create_publisher(Odometry, '/odometry', 10)
+
+        self.tf2_broadcaster = None
+        if self.BROADCAST_TF2:
+            self.tf2_broadcaster = TransformBroadcaster(self)
+
+        self.jointPub = None
+        if self.PUB_JOINTS:
+            self.jointPub = self.create_publisher(JointState, '/joint_states', 10)
 
         # calculated parameters
         self.PULSE_PER_REV = self.GEAR_RATIO * self.ENCODER_PPR
@@ -83,27 +111,6 @@ class OdometryPublisher(Node):
 
         self.left_wheel_position = 0
         self.right_wheel_position = 0
-
-    def quaternion_from_euler(self, ai, aj, ak):
-        ai /= 2.0
-        aj /= 2.0
-        ak /= 2.0
-        ci = math.cos(ai)
-        si = math.sin(ai)
-        cj = math.cos(aj)
-        sj = math.sin(aj)
-        ck = math.cos(ak)
-        sk = math.sin(ak)
-        cc = ci * ck
-        cs = ci * sk
-        sc = si * ck
-        ss = si * sk
-        q = [0] * 4
-        q[0] = cj * sc - sj * cs
-        q[1] = cj * ss + sj * cc
-        q[2] = cj * cs - sj * sc
-        q[3] = cj * cc + sj * ss
-        return q
 
     def odometry_callback(self):
 
@@ -125,7 +132,7 @@ class OdometryPublisher(Node):
                 self.odometryController.update_right_wheel(encoder_right)
                 self.odometryController.update_pose(odom_time.nanoseconds)  # update_pose expects time as nanoseconds
 
-        if self.BROADCAST_TF:
+        if self.BROADCAST_TF2:
 
             t = TransformStamped()
             t.header.stamp = odom_time.to_msg()
@@ -136,13 +143,13 @@ class OdometryPublisher(Node):
             t.transform.translation.y = self.odometryController.get_pose().y
             t.transform.translation.z = 0.0
 
-            q = self.quaternion_from_euler(0, 0, self.odometryController.get_pose().theta)
+            q = quaternion_from_euler(0, 0, self.odometryController.get_pose().theta)
             t.transform.rotation.x = q[0]
             t.transform.rotation.y = q[1]
             t.transform.rotation.z = q[2]
             t.transform.rotation.w = q[3]
 
-            self.tf_broadcaster.sendTransform(t)
+            self.tf2_broadcaster.sendTransform(t)
 
         if self.PUB_ODOMETRY:
 
@@ -153,7 +160,7 @@ class OdometryPublisher(Node):
             odom.pose.pose.position.x = self.odometryController.get_pose().x
             odom.pose.pose.position.y = self.odometryController.get_pose().y
 
-            q = self.quaternion_from_euler(0, 0, self.odometryController.get_pose().theta)
+            q = quaternion_from_euler(0, 0, self.odometryController.get_pose().theta)
             odom.pose.pose.orientation.x = q[0]
             odom.pose.pose.orientation.y = q[1]
             odom.pose.pose.orientation.z = q[2]
