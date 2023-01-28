@@ -43,7 +43,7 @@ class ROSRiderDiffDrive(Node):
         self.ENCODER_PPR = self.get_parameter('ENCODER_PPR').value
         self.GEAR_RATIO = self.get_parameter('GEAR_RATIO').value
 
-        self.diffDriveCntroller = DiffDriveController.Controller(self.WHEEL_DIA, self.BASE_WIDTH, self.MAX_RPM)
+        self.diffDriveController = DiffDriveController.Controller(self.WHEEL_DIA, self.BASE_WIDTH, self.MAX_RPM)
 
     def cmd_vel_callback(self, twist):
 

@@ -19,7 +19,7 @@ class SetRtcService(Node):
 
         super().__init__('service')
 
-        self.srv_sysctl = self.create_service(SetRtc, 'rosrider/sysctl', self.setrtc_callback)
+        self.srv_sysctl = self.create_service(SetRtc, '/rosrider/sysctl', self.setrtc_callback)
 
         self.declare_parameter('I2C_ENABLED', True)
         self.I2C_ENABLED = self.get_parameter('I2C_ENABLED').get_parameter_value().bool_value

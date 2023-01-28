@@ -14,7 +14,7 @@ class DriveModeService(Node):
 
         super().__init__('service')
 
-        self.srv_drivectl = self.create_service(DriveCtl, 'rosrider/drivectl', self.drivectl_callback)
+        self.srv_drivectl = self.create_service(DriveCtl, '/rosrider/drivectl', self.drivectl_callback)
 
         self.declare_parameter('I2C_ENABLED', True)
         self.I2C_ENABLED = self.get_parameter('I2C_ENABLED').get_parameter_value().bool_value

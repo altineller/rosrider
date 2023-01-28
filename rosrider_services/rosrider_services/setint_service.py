@@ -15,7 +15,7 @@ class SetIntService(Node):
 
         super().__init__('service')
 
-        self.srv_setint = self.create_service(SetInt, 'rosrider/setint', self.setint_callback)
+        self.srv_setint = self.create_service(SetInt, '/rosrider/setint', self.setint_callback)
 
         self.declare_parameter('I2C_ENABLED', True)
         self.I2C_ENABLED = self.get_parameter('I2C_ENABLED').get_parameter_value().bool_value

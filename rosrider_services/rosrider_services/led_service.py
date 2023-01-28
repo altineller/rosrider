@@ -15,7 +15,7 @@ class LedService(Node):
 
         super().__init__('led_service')
 
-        self.srv_ledctl = self.create_service(LedCtl, 'rosrider/ledctl', self.led_callback)
+        self.srv_ledctl = self.create_service(LedCtl, '/rosrider/ledctl', self.led_callback)
 
         self.declare_parameter('I2C_ENABLED', True)
         self.I2C_ENABLED = self.get_parameter('I2C_ENABLED').get_parameter_value().bool_value

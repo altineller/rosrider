@@ -14,18 +14,13 @@ from smbus2 import SMBus
 # TODO: parameter callback
 # TODO: global parameter
 # TODO: check twist coming from odom
-# TODO: publish current data, create message type
-# TODO: also debug data, create message type
 # TODO: optional TF bcast of wheel positions
-'''
-cs_left_raw = status[8] << 8 | status[9]
-cs_right_raw = status[10] << 8 | status[11]
 
+
+# TODO: this packet entails bus current, and status data, that should be published as well.
+'''
 bus_current_raw = status[12] << 8 | status[13]
 bus_voltage_raw = status[14] << 8 | status[15]
-
-cs_left = cs_left_raw * (6.6 / 4095)  # 500mV/A
-cs_right = cs_right_raw * (6.6 / 4095)  # 500mV/A
 '''
 
 
@@ -126,6 +121,9 @@ class OdometryPublisher(Node):
                 status = bus.read_i2c_block_data(0x3C, 0xA0, 22)
                 encoder_left = status[0] << 24 | status[1] << 16 | status[2] << 8 | status[3]
                 encoder_right = status[4] << 24 | status[5] << 16 | status[6] << 8 | status[7]
+
+                # TODO: add checksum checking
+
                 delta_msec = status[20] << 8 | status[21]
                 odom_time = current_time - Duration(nanoseconds=(delta_msec * 1000))
                 self.odometryController.update_left_wheel(encoder_left)

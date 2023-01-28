@@ -1,6 +1,6 @@
 from math import pi
 
-
+# TODO: add velocity and effort to joint states
 class PIDCommand:
     def __init__(self):
         self.left = 0
