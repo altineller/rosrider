@@ -1,14 +1,15 @@
-diff_drive:
+rosrider_node:
   ros__parameters:
-    I2C_ENABLED: True
-    UPDATE_RATE: 10
+    I2C_ENABLED: False
+    UPDATE_RATE: 20
     WHEEL_DIA: 0.0685
     BASE_WIDTH: 0.1
     MAX_RPM: 90.0
-odometry_publisher:
-  ros__parameters:
-    I2C_ENABLED: True
-    UPDATE_RATE: 10
-    WHEEL_DIA: 0.0685
-    BASE_WIDTH: 0.1
-    MAX_RPM: 90.0
+    ENCODER_PPR: 48
+    GEAR_RATIO: 65.0
+    ODOM_FRAME_ID: 'odom'
+    BASE_FRAME_ID: 'base_footprint'
+    BROADCAST_TF2: True
+    PUB_ODOMETRY: True
+    PUB_JOINTS: True
+    PUB_DIAGNOSTICS: True

@@ -22,9 +22,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'diff_drive = rosrider_node.rosrider_diff_drive:main',
-            'odometry_publisher = rosrider_node.rosrider_odometry_publisher:main',
-            'debug_publisher = rosrider_node.rosrider_debug_publisher:main'
+            'rosrider_node = rosrider_node.rosrider_node:main',
         ],
     },
 )

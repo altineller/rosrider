@@ -10,19 +10,10 @@ def generate_launch_description():
 
     config = os.path.join(get_package_share_directory('rosrider_node'), 'config', 'rosrider.yaml')
 
-    diff_drive_node = Node(
+    rosrider_node = Node(
         package='rosrider_node',
-        executable='diff_drive',
-        name='diff_drive',
-        output='screen',
-        emulate_tty=True,
-        parameters=[config]
-    )
-
-    odometry_publisher_node = Node(
-        package='rosrider_node',
-        executable='odometry_publisher',
-        name='odometry_publisher',
+        executable='rosrider_node',
+        name='rosrider_node',
         output='screen',
         emulate_tty=True,
         parameters=[config]
@@ -55,8 +46,7 @@ def generate_launch_description():
         parameters=[config]
     )
 
-    ld.add_action(diff_drive_node)
-    ld.add_action(odometry_publisher_node)
+    ld.add_action(rosrider_node)
     ld.add_action(drivemode_service_node)
     ld.add_action(led_service_node)
     ld.add_action(sysctl_node)
