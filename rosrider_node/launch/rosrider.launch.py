@@ -19,36 +19,16 @@ def generate_launch_description():
         parameters=[config]
     )
 
-    drivemode_service_node = Node(
+    service_node = Node(
         package='rosrider_services',
-        executable='drivemode',
-        name='drivemode',
-        output='screen',
-        emulate_tty=True,
-        parameters=[config]
-    )
-
-    led_service_node = Node(
-        package='rosrider_services',
-        executable='led',
-        name='led',
-        output='screen',
-        emulate_tty=True,
-        parameters=[config]
-    )
-
-    sysctl_node = Node(
-        package='rosrider_services',
-        executable='sysctl',
-        name='sysctl',
+        executable='service',
+        name='service',
         output='screen',
         emulate_tty=True,
         parameters=[config]
     )
 
     ld.add_action(rosrider_node)
-    ld.add_action(drivemode_service_node)
-    ld.add_action(led_service_node)
-    ld.add_action(sysctl_node)
+    ld.add_action(service_node)
 
     return ld

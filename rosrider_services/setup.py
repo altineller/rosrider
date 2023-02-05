@@ -18,13 +18,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'drivemode = rosrider_services.drivemode_service:main',
-            'led = rosrider_services.led_service:main',
-            'pidtune = rosrider_services.pidtune_service:main',
-            'setfloat = rosrider_services.setfloat_service:main',
-            'setint = rosrider_services.setint_service:main',
-            'setrtc = rosrider_services.setrtc_service:main',
-            'sysctl = rosrider_services.sysctl_service:main'
+            'service = rosrider_services.rosrider_service:main'
         ],
     },
 )

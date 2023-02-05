@@ -1,6 +1,6 @@
 rosrider_node:
   ros__parameters:
-    I2C_ENABLED: False
+    I2C_ENABLED: True
     UPDATE_RATE: 20
     WHEEL_DIA: 0.0685
     BASE_WIDTH: 0.1

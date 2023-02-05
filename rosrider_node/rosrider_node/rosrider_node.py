@@ -1,4 +1,5 @@
 from math import pi
+import crc8
 import rclpy
 from rclpy.duration import Duration
 from rclpy.node import Node
@@ -6,6 +7,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
 from tf2_ros import TransformBroadcaster
+
 from rosrider_node import OdometryController
 from geometry_msgs.msg import Twist
 from rosrider_node import DiffDriveController
@@ -15,14 +17,12 @@ import math
 import struct
 from smbus2 import SMBus
 
-TX_BUFFER_SIZE = 18
-DEBUG_BUFFER_SIZE = 20
-NIBBLE_LOOKUP = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4]
+STATUS_BUFFER_SIZE = 32
 
-# TODO: problem with twist coming from odom, sometimes sharp increases. find reason
-# TODO: handle smbus fail
-# TODO: this packet entails bus current, and status data, that should be published as well.
 # TODO: add velocity and effort to joint states, check where it is done.
+# TODO: problem with twist coming from odom, sometimes sharp increases. find reason. plot input vs output
+# TODO: initial test that board works, it should read status of course?
+# TODO: we have a packet sequence, so no packet should be read twice. also no need to invalidate packet if age > period
 
 
 def quaternion_from_euler(ai, aj, ak):
@@ -47,8 +47,8 @@ def quaternion_from_euler(ai, aj, ak):
     return q
 
 
-def count_ones(byte):
-    return NIBBLE_LOOKUP[byte & 0x0F] + NIBBLE_LOOKUP[byte >> 4]
+def cap(input_number, min_number, max_number):
+    return max(min(max_number, input_number), min_number)
 
 
 class ROSRiderNode(Node):
@@ -116,8 +116,9 @@ class ROSRiderNode(Node):
         self.ROUNDS_PER_MINUTE = (60.0 / (1.0 / self.UPDATE_RATE)) / self.PULSE_PER_REV
         self.LINEAR_RPM = (1.0 / self.WHEEL_CIRCUMFERENCE) * 60.0
         self.ANGULAR_RPM = (self.BASE_WIDTH / (self.WHEEL_CIRCUMFERENCE * 2.0)) * 60.0
-        # TODO: use
-        self.COMMAND_TIMEOUT_MS = 2000.0 / self.UPDATE_RATE
+
+        self.UPDATE_PERIOD_NS = 1000000000 / self.UPDATE_RATE
+        self.UPDATE_PERIOD_MS = 1000 / self.UPDATE_RATE
 
         # controllers
         self.odometryController = OdometryController.Controller(self.BASE_WIDTH, self.TICKS_PER_METER)
@@ -134,19 +135,17 @@ class ROSRiderNode(Node):
         self.left_wheel_position = 0
         self.right_wheel_position = 0
 
-        # diagnostic data, from read_status
-        self.bus_current_avg = 0.0
-        self.bus_voltage_avg = 0.0
-        self.PWR_STATUS = 0
-        self.MTR_STATUS = 0
-        self.SYS_STATUS = 0
-
-        # TODO: publish, also optional but with message, battery msg type.
+        # Loop PI controller
+        self.error_integral = 0.0
 
     def cmd_vel_callback(self, twist):
+
+        # convert twist command linear, angular to pid command left, right
         pid_commands = self.diffDriveController.get_pid_commands(twist.linear.x, twist.angular.z)
-        pid_left_array = list(bytearray(struct.pack("f", pid_commands.left)))
-        pid_right_array = list(bytearray(struct.pack("f", pid_commands.right)))
+
+        pid_left_array = bytearray(struct.pack("f", pid_commands.left))
+        pid_right_array = bytearray(struct.pack("f", pid_commands.right))
+
         send_array = pid_left_array + pid_right_array
         if self.I2C_ENABLED:
             with SMBus(1) as bus:
@@ -155,135 +154,173 @@ class ROSRiderNode(Node):
     def main_timer_callback(self):
 
         current_time = self.get_clock().now()
-        odom_time = current_time
-        encoder_left = 0
-        encoder_right = 0
+        odom = Odometry()
+        diagnostics = Diagnostics()
+        t = TransformStamped()
+        joint_states = JointState()
 
         # read status from device
         if self.I2C_ENABLED:
+
             with SMBus(1) as bus:
-                status = bus.read_i2c_block_data(0x3C, 0xA0, TX_BUFFER_SIZE)
-                encoder_left = status[0] << 24 | status[1] << 16 | status[2] << 8 | status[3]
-                encoder_right = status[4] << 24 | status[5] << 16 | status[6] << 8 | status[7]
-                packet_checksum = status[TX_BUFFER_SIZE - 1]
-                calculated_checksum = 0
-                for i in range(TX_BUFFER_SIZE - 3):
-                    calculated_checksum += count_ones(status[i])
+
+                try:
+                    status = bus.read_i2c_block_data(0x3C, 0xA0, STATUS_BUFFER_SIZE)
+                except IOError as e:
+                    self.get_logger().info('IOError: %s' % e)
+                    return
+
+                # last byte is packet checksum, the one before packet_age_ms
+                packet_checksum = status[STATUS_BUFFER_SIZE - 1]
+                packet_age_ms = status[STATUS_BUFFER_SIZE - 2]
+                diagnostics.packet_age_ms = packet_age_ms
+
+                crc8hash = crc8.crc8()
+                crc8hash.update(bytearray(status[0:STATUS_BUFFER_SIZE - 2]))
+                calculated_checksum = int(crc8hash.hexdigest(), 16)
+
+                # PI loop lock
+                normalized_error = (self.UPDATE_PERIOD_MS / 2) - packet_age_ms  # error = target - packet_age
+                error_proportional = normalized_error * 20000  # kP
+                self.error_integral += normalized_error * 1000  # kI
+                self.error_integral = cap(self.error_integral, -50000, 50000)
+
+                self.main_timer.timer_period_ns = self.UPDATE_PERIOD_NS + (error_proportional + self.error_integral)
+
                 if calculated_checksum == packet_checksum:
-                    delta_msec = status[TX_BUFFER_SIZE - 3] << 8 | status[TX_BUFFER_SIZE - 2]
-                    odom_time = current_time - Duration(nanoseconds=(delta_msec * 1000))
-                    self.bus_current_avg = status[8] << 8 | status[9]
-                    self.bus_voltage_avg = status[10] << 8 | status[11]
-                    self.PWR_STATUS = status[12]
-                    self.MTR_STATUS = status[13]
-                    self.SYS_STATUS = status[14]
+
+                    odom_time = current_time - Duration(nanoseconds=(packet_age_ms * 1000))
+
+                    # anything that sets diagnostics must be in this try
+                    try:
+
+                        encoder_left = status[0] << 24 | status[1] << 16 | status[2] << 8 | status[3]
+                        encoder_right = status[4] << 24 | status[5] << 16 | status[6] << 8 | status[7]
+
+                        # notice these are not in diagnostics but should be
+                        diagnostics.bus_current = (status[8] << 8 | status[9]) / (10.0 * 1000.0)  # convert to amps
+                        diagnostics.bus_voltage = (status[10] << 8 | status[11]) / 1000.0  # convert to volts
+
+                        # measured current left, right
+                        cs_left_raw = (status[12] << 8 | status[13])
+                        cs_right_raw = (status[14] << 8 | status[15])
+
+                        diagnostics.cs_left = cs_left_raw * (6.6 / 4095)  # 500mV/A
+                        diagnostics.cs_right = cs_right_raw * (6.6 / 4095)  # 500mV/A
+
+                        # control effort
+                        pwm_left = status[16] << 8 | status[17]
+                        pwm_right = status[18] << 8 | status[19]
+
+                        # motor pwm direction
+                        dir_left = (status[20] & 0x01) > 0
+                        dir_right = (status[20] & 0x02) > 0
+
+                        # apply sign to pwm, based on motor pwm direction
+                        if dir_left:
+                            diagnostics.pwm_left = -pwm_left
+                        else:
+                            diagnostics.pwm_left = pwm_left
+
+                        if dir_right:
+                            diagnostics.pwm_right = -pwm_right
+                        else:
+                            diagnostics.pwm_right = pwm_right
+
+                        # encoder dir values
+                        enc_dir_left = (status[25] & 0x0F) - 1
+                        enc_dir_right = ((status[25] & 0xF0) >> 4) - 1
+
+                        # current rpm raw values, multiply by ROUNDS_PER_MINUTE and apply sign by encoder_dir
+                        if enc_dir_left == -1:
+                            diagnostics.rpm_left = -((status[21] << 8 | status[22]) * self.ROUNDS_PER_MINUTE)
+                        else:
+                            diagnostics.rpm_left = (status[21] << 8 | status[22]) * self.ROUNDS_PER_MINUTE
+
+                        if enc_dir_right == -1:
+                            diagnostics.rpm_right = -((status[23] << 8 | status[24]) * self.ROUNDS_PER_MINUTE)
+                        else:
+                            diagnostics.rpm_right = (status[23] << 8 | status[24]) * self.ROUNDS_PER_MINUTE
+
+                        diagnostics.power_status = status[26]
+                        diagnostics.motor_status = status[27]
+                        diagnostics.system_status = status[28]
+
+                    except AssertionError as e:
+                        self.get_logger().info('assertion error: %s' % e)
+
+                    # update odometry controller, and pose
                     self.odometryController.update_left_wheel(encoder_left)
                     self.odometryController.update_right_wheel(encoder_right)
                     self.odometryController.update_pose(odom_time.nanoseconds)  # update expects time in nanoseconds
+
+                    # create quaternion
+                    q = quaternion_from_euler(0, 0, self.odometryController.get_pose().theta)
+
+                    # fill in odometry values
+                    odom.header.stamp = odom_time.to_msg()
+                    odom.header.frame_id = self.ODOM_FRAME_ID
+                    odom.child_frame_id = self.BASE_FRAME_ID
+                    odom.pose.pose.position.x = self.odometryController.get_pose().x
+                    odom.pose.pose.position.y = self.odometryController.get_pose().y
+
+                    # fill in pose
+                    odom.pose.pose.orientation.x = q[0]
+                    odom.pose.pose.orientation.y = q[1]
+                    odom.pose.pose.orientation.z = q[2]
+                    odom.pose.pose.orientation.w = q[3]
+
+                    # twist
+                    odom.twist.twist.linear.x = self.odometryController.get_pose().xVel
+                    odom.twist.twist.angular.z = self.odometryController.get_pose().thetaVel
+
+                    # covariances
+                    odom.pose.covariance[0] = 0.01
+                    odom.pose.covariance[7] = 0.0
+                    odom.pose.covariance[14] = 0.0
+                    odom.pose.covariance[21] = 0.0
+                    odom.pose.covariance[28] = 0.0
+                    odom.pose.covariance[35] = 0.1
+                    odom.twist.covariance[0] = 0.01
+                    odom.twist.covariance[7] = 0.0
+                    odom.twist.covariance[14] = 0.0
+                    odom.twist.covariance[21] = 0.0
+                    odom.twist.covariance[28] = 0.0
+                    odom.twist.covariance[35] = 0.01
+
+                    # prepare transform
+                    t.header.stamp = odom_time.to_msg()
+                    t.header.frame_id = self.ODOM_FRAME_ID
+                    t.child_frame_id = self.BASE_FRAME_ID
+                    t.transform.translation.x = self.odometryController.get_pose().x
+                    t.transform.translation.y = self.odometryController.get_pose().y
+                    t.transform.translation.z = 0.0
+                    t.transform.rotation.x = q[0]
+                    t.transform.rotation.y = q[1]
+                    t.transform.rotation.z = q[2]
+                    t.transform.rotation.w = q[3]
+
+                    self.left_wheel_position = (encoder_left % self.PULSE_PER_REV) / self.PULSE_PER_REV * 2 * pi
+                    self.right_wheel_position = (encoder_right % self.PULSE_PER_REV) / self.PULSE_PER_REV * 2 * pi
+                    joint_states.header.stamp = odom_time.to_msg()
+                    joint_states.name = ['wheel_left_joint', 'wheel_right_joint']
+                    joint_states.position = [self.left_wheel_position, self.right_wheel_position]
+
                 else:
-                    self.get_logger().info('status checksum fail')
-
-        # read debug from device, this must come second
-        if self.PUB_DIAGNOSTICS:
-
-            diagnostics = Diagnostics()
-            if self.I2C_ENABLED:
-                with SMBus(1) as bus:
-                    # read debug
-                    debug = bus.read_i2c_block_data(0x3C, 0xA1, DEBUG_BUFFER_SIZE)
-                    packet_checksum = debug[DEBUG_BUFFER_SIZE - 1]
-                    calculated_checksum = 0
-                    for i in range(DEBUG_BUFFER_SIZE - 3):
-                        calculated_checksum += count_ones(debug[i])
-                    if calculated_checksum == packet_checksum:
-                        pwm_left = debug[0] << 8 | debug[1]
-                        pwm_right = debug[2] << 8 | debug[3]
-                        dir_left = debug[4] & 0x01 > 0
-                        dir_right = debug[4] & 0x02 > 0
-                        # measured rpm, left and right
-                        rpm_left = struct.unpack('f', bytearray([debug[5], debug[6], debug[7], debug[8]]))[0]
-                        rpm_right = struct.unpack('f', bytearray([debug[9], debug[10], debug[11], debug[12]]))[0]
-                        # measured current left, right
-                        cs_left_raw = debug[13] << 8 | debug[14]
-                        cs_right_raw = debug[15] << 8 | debug[16]
-                        cs_left = cs_left_raw * (6.6 / 4095)  # 500mV/A
-                        cs_right = cs_right_raw * (6.6 / 4095)  # 500mV/A
-                        packet_age_ms = (debug[DEBUG_BUFFER_SIZE - 3] << 8) | debug[DEBUG_BUFFER_SIZE - 2]
-                        # apply sign to pwm and rpm, based on dir_left, dir_right
-                        if dir_left:
-                            diagnostics.pwm_left = -pwm_left
-                            diagnostics.rpm_left = -rpm_left
-                        else:
-                            diagnostics.pwm_left = pwm_left
-                            diagnostics.rpm_left = rpm_left
-                        if dir_right:
-                            diagnostics.pwm_right = -pwm_right
-                            diagnostics.rpm_right = -rpm_right
-                        else:
-                            diagnostics.pwm_right = pwm_right
-                            diagnostics.rpm_right = rpm_right
-
-                        diagnostics.cs_left = cs_left
-                        diagnostics.cs_right = cs_right
-                        diagnostics.packet_age_ms = packet_age_ms
-                        self.diagPub.publish(diagnostics)
-                    else:
-                        self.get_logger().info('diagnostics checksum fail.')
+                    self.get_logger().info('packet:%s != calculated: %s' % (packet_checksum, calculated_checksum))
+                    self.get_logger().info('%s,%s' % (current_time, status))
 
         if self.PUB_ODOMETRY:
-
-            odom = Odometry()
-            odom.header.stamp = odom_time.to_msg()
-            odom.header.frame_id = self.ODOM_FRAME_ID
-            odom.child_frame_id = self.BASE_FRAME_ID
-            odom.pose.pose.position.x = self.odometryController.get_pose().x
-            odom.pose.pose.position.y = self.odometryController.get_pose().y
-
-            q = quaternion_from_euler(0, 0, self.odometryController.get_pose().theta)
-            odom.pose.pose.orientation.x = q[0]
-            odom.pose.pose.orientation.y = q[1]
-            odom.pose.pose.orientation.z = q[2]
-            odom.pose.pose.orientation.w = q[3]
-
-            odom.twist.twist.linear.x = self.odometryController.get_pose().xVel
-            odom.twist.twist.angular.z = self.odometryController.get_pose().thetaVel
-            odom.pose.covariance[0] = 0.01
-            odom.pose.covariance[7] = 0.0
-            odom.pose.covariance[14] = 0.0
-            odom.pose.covariance[21] = 0.0
-            odom.pose.covariance[28] = 0.0
-            odom.pose.covariance[35] = 0.1
-            odom.twist.covariance[0] = 0.01
-            odom.twist.covariance[7] = 0.0
-            odom.twist.covariance[14] = 0.0
-            odom.twist.covariance[21] = 0.0
-            odom.twist.covariance[28] = 0.0
-            odom.twist.covariance[35] = 0.01
             self.odomPub.publish(odom)
 
         if self.BROADCAST_TF2:
-            t = TransformStamped()
-            t.header.stamp = odom_time.to_msg()
-            t.header.frame_id = self.ODOM_FRAME_ID
-            t.child_frame_id = self.BASE_FRAME_ID
-            t.transform.translation.x = self.odometryController.get_pose().x
-            t.transform.translation.y = self.odometryController.get_pose().y
-            t.transform.translation.z = 0.0
-            q = quaternion_from_euler(0, 0, self.odometryController.get_pose().theta)
-            t.transform.rotation.x = q[0]
-            t.transform.rotation.y = q[1]
-            t.transform.rotation.z = q[2]
-            t.transform.rotation.w = q[3]
             self.tf2_broadcaster.sendTransform(t)
 
         if self.PUB_JOINTS:
-            self.left_wheel_position = (encoder_left % self.PULSE_PER_REV) / self.PULSE_PER_REV * 2 * pi
-            self.right_wheel_position = (encoder_right % self.PULSE_PER_REV) / self.PULSE_PER_REV * 2 * pi
-            joint_states = JointState()
-            joint_states.header.stamp = odom_time.to_msg()
-            joint_states.name = ['wheel_left_joint', 'wheel_right_joint']
-            joint_states.position = [self.left_wheel_position, self.right_wheel_position]
             self.jointPub.publish(joint_states)
+
+        if self.PUB_DIAGNOSTICS:
+            self.diagPub.publish(diagnostics)
 
 
 def main(args=None):
