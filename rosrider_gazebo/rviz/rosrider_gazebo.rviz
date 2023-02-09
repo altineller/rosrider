@@ -145,9 +145,9 @@ Visualization Manager:
         Axes Length: 1
         Axes Radius: 0.10000000149011612
         Color: 255; 25; 0
-        Head Length: 0.05000000074505806
-        Head Radius: 0.029999999329447746
-        Shaft Length: 0.10000000149011612
+        Head Length: 0.019999999552965164
+        Head Radius: 0.019999999552965164
+        Shaft Length: 0.05000000074505806
         Shaft Radius: 0.009999999776482582
         Value: Arrow
       Topic:
@@ -184,6 +184,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         base_scan:
           Alpha: 1
           Show Axes: false
