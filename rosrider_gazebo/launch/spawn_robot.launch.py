@@ -28,7 +28,7 @@ def generate_launch_description():
         package='gazebo_ros',
         executable='spawn_entity.py',
         arguments=[
-            '-entity', 'caretta',  # TODO
+            '-entity', ROBOT_MODEL,
             '-file', urdf_path,
             '-x', x_pose,
             '-y', y_pose,

@@ -22,8 +22,8 @@ public:
 
 private:
 
-  rclcpp::Time last_cmd_vel_time_;
-  rclcpp::Time prev_update_time_;
+  rclcpp::Time last_cmd_vel_time;
+  rclcpp::Time prev_update_time;
 
   rclcpp::TimerBase::SharedPtr update_timer;
 
@@ -33,22 +33,20 @@ private:
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub;
 
-  nav_msgs::msg::Odometry odom_;
+  nav_msgs::msg::Odometry odom;
   sensor_msgs::msg::JointState joint_states;
 
-  // TODO: refactor all the _'s
+  double wheel_speed_cmd[2];
+  double goal_linear_velocity;
+  double goal_angular_velocity;
+  double cmd_vel_timeout;
+  double last_position[2];
+  double last_velocity[2];
+  float odom_pose[3];
+  float odom_vel[3];
 
-  double wheel_speed_cmd_[2];
-  double goal_linear_velocity_;
-  double goal_angular_velocity_;
-  double cmd_vel_timeout_;
-  double last_position_[2];
-  double last_velocity_[2];
-  float odom_pose_[3];
-  float odom_vel_[3];
-
-  double wheel_seperation_;
-  double wheel_radius_;
+  double wheel_seperation;
+  double wheel_radius;
 
   // Function prototypes
   void init_parameters();
