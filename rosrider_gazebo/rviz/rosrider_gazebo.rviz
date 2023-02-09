@@ -4,9 +4,8 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /TF1
         - /TF1/Frames1
-        - /Odometry1
+        - /LaserScan1/Topic1
         - /Odometry1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 814
@@ -94,8 +93,8 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz_default_plugins/LaserScan
-      Color: 255; 255; 255
-      Color Transformer: Intensity
+      Color: 115; 210; 22
+      Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
@@ -108,13 +107,13 @@ Visualization Manager:
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.019999999552965164
-      Style: Flat Squares
+      Style: Points
       Topic:
         Depth: 5
         Durability Policy: Volatile
         Filter size: 10
         History Policy: Keep Last
-        Reliability Policy: Reliable
+        Reliability Policy: Best Effort
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
@@ -249,25 +248,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.7348692417144775
+      Distance: 4.903660774230957
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.058439701795578
-        Y: 0.029811028391122818
-        Z: -0.024612385779619217
+        X: -0.08012185990810394
+        Y: 0.3232896029949188
+        Z: -0.18834781646728516
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7303980588912964
+      Pitch: 0.8253980278968811
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 0.9354010820388794
+      Yaw: 1.6604067087173462
     Saved:
       - Class: rviz_default_plugins/Orbit
         Distance: 5

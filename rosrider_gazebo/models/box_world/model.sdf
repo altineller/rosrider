@@ -1,0 +1,35 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='bounding_box'>
+    <pose frame=''>0 0 0 0 0 0</pose>
+    <link name='box_1'>
+      <collision name='box_1_collision'>
+        <geometry>
+          <mesh>
+            <uri>model://common/meshes/box.stl</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+        <pose frame=''>-1.01 -1.01 0 0 0 0</pose>
+      </collision>
+      <visual name='box_1_visual'>
+        <pose frame=''>-1.01 -1.01 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://common/meshes/box.stl</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Wood</name>
+          </script>
+          <ambient>1 1 1 1</ambient>
+        </material>
+      </visual>
+      <pose frame=''>0 0 0 0 0 0</pose>
+    </link>
+    <static>1</static>
+  </model>
+</sdf>
