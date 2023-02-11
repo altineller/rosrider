@@ -10,7 +10,7 @@ def generate_launch_description():
 
     config = os.path.join(get_package_share_directory('rosrider_node'), 'param', 'rosrider.yaml')
 
-    urdf = os.path.join(get_package_share_directory('rosrider_gazebo'), 'urdf', ROBOT_MODEL + '.urdf')
+    urdf = os.path.join(get_package_share_directory('rosrider_description'), 'urdf', ROBOT_MODEL + '.urdf')
 
     rosrider_node = Node(package='rosrider_node', executable='rosrider_node', name='rosrider_node',
                          output='screen', emulate_tty=True, parameters=[config])

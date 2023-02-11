@@ -20,7 +20,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    urdf = os.path.join(get_package_share_directory('rosrider_gazebo'), 'urdf', ROBOT_MODEL + '.urdf')
+    urdf = os.path.join(get_package_share_directory('rosrider_description'), 'urdf', ROBOT_MODEL + '.urdf')
 
     return LaunchDescription([
 

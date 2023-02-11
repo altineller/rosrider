@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="caretta" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="sorcerer" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <material name="blue">
     <color rgba="0.0 0.0 0.8 1.0"/>
@@ -12,6 +12,9 @@
   </material>
   <material name="purple">
     <color rgba="1.0 0.02 1.0 1.0"/>
+  </material>
+  <material name="yellow">
+    <color rgba="1.0 1.0 0.0 1.0"/>
   </material>
   <material name="white">
     <color rgba="1.0 1.0 1.0 1.0"/>
@@ -26,24 +29,24 @@
   </joint>
   <link name="base_link">
     <visual>
-      <origin xyz="0 0 0.028" rpy="0 0 0"/>
+      <origin xyz="0 0 0.0136" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://rosrider_gazebo/models/common/meshes/caretta.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://rosrider_description/models/common/meshes/sorcerer.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="red"/>
+      <material name="yellow"/>
     </visual>
   </link>
   <joint name="wheel_left_joint" type="continuous">
     <parent link="base_link"/>
     <child link="wheel_left_link"/>
-    <origin xyz="0.0 0.092 0.0" rpy="-1.57 0 0"/>
+    <origin xyz="0.0 0.05 0.0" rpy="-1.57 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="wheel_left_link">
     <visual>
       <origin xyz="0 0 0" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://rosrider_gazebo/models/common/meshes/wheel_left.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://rosrider_description/models/common/meshes/wheel_left.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -52,14 +55,14 @@
   <joint name="wheel_right_joint" type="continuous">
     <parent link="base_link"/>
     <child link="wheel_right_link"/>
-    <origin xyz="0.0 -0.092 0.0" rpy="-1.57 0 0"/>
+    <origin xyz="0.0 -0.05 0.0" rpy="-1.57 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="wheel_right_link">
     <visual>
       <origin xyz="0 0 0" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://rosrider_gazebo/models/common/meshes/wheel_right.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://rosrider_description/models/common/meshes/wheel_right.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -68,7 +71,7 @@
   <joint name="caster_back_joint" type="fixed">
     <parent link="base_link"/>
     <child link="caster_back_link"/>
-    <origin xyz="-0.1454 0 -0.02425" rpy="0 0 0"/>
+    <origin xyz="-0.09 0 -0.02425" rpy="0 0 0"/>
   </joint>
   <link name="caster_back_link">
     <visual>
@@ -82,7 +85,7 @@
   <joint name="imu_joint" type="fixed">
     <parent link="base_link"/>
     <child link="imu_link"/>
-    <origin xyz="-0.056 0.078 0.0396" rpy="0 0 0"/>
+    <origin xyz="0.008 0 0.0884" rpy="0 0 0"/>
   </joint>
   <link name="imu_link">
     <visual>
@@ -97,15 +100,15 @@
   <joint name="scan_joint" type="fixed">
     <parent link="base_link"/>
     <child link="base_scan"/>
-    <origin xyz="-0.063 0 0.06975" rpy="0 0 0"/>
+    <origin xyz="-0.067 0 0.12" rpy="0 0 0"/>
   </joint>
   <link name="base_scan">
     <visual>
-      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.022" radius="0.0328"/>
+        <cylinder length="0.012" radius="0.018"/>
       </geometry>
-      <material name="blue"/>
+      <material name="grey"/>
     </visual>
   </link>
 
