@@ -386,7 +386,7 @@
             </z>
           </linear_acceleration>
         </imu>
-        <plugin name="caretta_imu" filename="libgazebo_ros_imu_sensor.so">
+        <plugin name="sorcerer_imu" filename="libgazebo_ros_imu_sensor.so">
           <ros>
             <!-- <namespace></namespace> -->
             <remapping>~/out:=imu</remapping>

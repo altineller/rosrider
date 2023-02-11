@@ -19,10 +19,9 @@ from smbus2 import SMBus
 
 STATUS_BUFFER_SIZE = 32
 
-# TODO: add velocity and effort to joint states, check where it is done.
-# TODO: problem with twist coming from odom, sometimes sharp increases. find reason. plot input vs output
-# TODO: initial test that board works, it should read status of course?
-# TODO: we have a packet sequence, so no packet should be read twice. also no need to invalidate packet if age > period
+# TODO: P1: add velocity and effort to joint states, check where it is done.
+# TODO: P1: initial test that board works, it should read status of course?
+# TODO: P1: we have a packet sequence, so no packet should be read twice. also no need to invalidate packet if age > period
 
 
 def quaternion_from_euler(ai, aj, ak):
@@ -92,7 +91,7 @@ class ROSRiderNode(Node):
         # create pub for odometry, if required
         self.odomPub = None
         if self.PUB_ODOMETRY:
-            self.odomPub = self.create_publisher(Odometry, '/odometry', 10)
+            self.odomPub = self.create_publisher(Odometry, '/odom', 10)
 
         # create broadcaster for tf2, if required
         self.tf2_broadcaster = None

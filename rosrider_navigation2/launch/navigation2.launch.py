@@ -15,8 +15,6 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     map_dir = LaunchConfiguration('map', default=os.path.join(get_package_share_directory('rosrider_navigation2'), 'map', 'map.yaml'))
-    # TODO
-    print(map_dir)
 
     param_dir = LaunchConfiguration('params_file', default=os.path.join(get_package_share_directory('rosrider_navigation2'), 'param', ROBOT_MODEL + '.yaml'))
 

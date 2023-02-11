@@ -57,7 +57,7 @@ void ROSRiderFake::init_variables() {
   last_velocity[LEFT] = 0.0;
   last_velocity[RIGHT] = 0.0;
 
-  // TODO
+  // TODO P3
   // double pcov[36] = { 0.1,   0,   0,   0,   0, 0,
   //                       0, 0.1,   0,   0,   0, 0,
   //                       0,   0, 1e6,   0,   0, 0,
