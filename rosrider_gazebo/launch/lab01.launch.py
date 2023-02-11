@@ -16,7 +16,7 @@ def generate_launch_description():
     x_pose = LaunchConfiguration('x_pose', default='0.0')
     y_pose = LaunchConfiguration('y_pose', default='0.0')
 
-    world = os.path.join(get_package_share_directory('rosrider_gazebo'), 'worlds', 'box_world.world')
+    world = os.path.join(get_package_share_directory('rosrider_gazebo'), 'worlds', 'lab01.world')
 
     gzserver_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

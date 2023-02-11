@@ -1,0 +1,427 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+  <model name="caretta">
+    <pose>0 0 0 0 0 0</pose>
+
+    <link name="base_footprint"/>
+
+    <joint name="base_joint" type="fixed">
+      <parent>base_footprint</parent>
+      <child>base_link</child>
+      <pose>0 0 0 0 0 0</pose>
+    </joint>
+    <link name="base_link">
+      <pose>0 0 0.03425 0 0 0</pose>
+      <inertial>
+        <pose>-0.064382 0.000883 0.027990 0 0 0</pose>
+        <inertia>
+          <ixx>0.005172787</ixx>
+          <ixy>-0.000009627</ixy>
+          <ixz>-0.0001130814</ixz>
+          <iyy>0.003997965</iyy>
+          <iyz>-0.00002288</iyz>
+          <izz>0.008669602</izz>
+        </inertia>
+        <mass>2.2</mass>
+      </inertial>
+      <collision name="base_collision">
+        <pose>0 0 0.028 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://common/meshes/caretta.stl</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="base_visual">
+        <pose>0 0 0.028 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://common/meshes/caretta.stl</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Red</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="wheel_left_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>wheel_left_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+    <link name="wheel_left_link">
+      <pose>0 0.092 0.03425 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 -1.57 0 0</pose>
+        <inertia>
+          <ixx>2.29346485819975e-5</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4.19370640001351e-5</iyy>
+          <iyz>0</iyz>
+          <izz>2.29346485819975e-5</izz>
+        </inertia>
+        <mass>0.06</mass>
+      </inertial>
+      <collision name="wheel_left_collision">
+        <pose>0 0 0 -1.57 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.03475</radius>
+            <length>0.0225</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>100000.0</mu>
+              <mu2>100000.0</mu2>
+              <fdir1>0 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>5e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="wheel_left_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://common/meshes/wheel_left.stl</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="wheel_right_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>wheel_right_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+    <link name="wheel_right_link">
+      <pose>0 -0.092 0.03425 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 -1.57 0 0</pose>
+        <inertia>
+          <ixx>2.29346485819975e-5</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4.19370640001351e-5</iyy>
+          <iyz>0</iyz>
+          <izz>2.29346485819975e-5</izz>
+        </inertia>
+        <mass>0.06</mass>
+      </inertial>
+      <collision name="wheel_right_collision">
+        <pose>0 0 0 -1.57 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.03475</radius>
+            <length>0.0225</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>100000.0</mu>
+              <mu2>100000.0</mu2>
+              <fdir1>0 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>5e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name="wheel_right_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://common/meshes/wheel_right.stl</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name='caster_back_joint' type='ball'>
+      <parent>base_link</parent>
+      <child>caster_back_link</child>
+    </joint>
+    <link name='caster_back_link'>
+      <pose>-0.1454 0 0.01 -1.57 0 0</pose>
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.00001</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.00001</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.00001</izz>
+        </inertia>
+      </inertial>
+      <collision name='caster_back_link_collision'>
+        <geometry>
+          <sphere>
+            <radius>0.01</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <soft_cfm>0</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>5e+5</kp>
+              <kd>1</kd>
+              <max_vel>0.01</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='caster_back_link_visual'>
+        <geometry>
+          <sphere>
+            <radius>0.01</radius>
+          </sphere>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="scan_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>base_scan</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+    <link name="base_scan">
+      <pose>-0.063 0 0.08625 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <inertia>
+          <ixx>0.00005</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.00005</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.00009</izz>
+        </inertia>
+        <mass>0.1</mass>
+      </inertial>
+      <collision name="base_scan_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.0328</radius>
+            <length>0.022</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="base_scan_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.0328</radius>
+            <length>0.022</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Blue</name>
+          </script>
+        </material>
+      </visual>
+      <sensor name="base_scan_sensor" type="ray">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>5</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1.000000</resolution>
+              <min_angle>0.000000</min_angle>
+              <max_angle>6.280000</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.120000</min>
+            <max>3.5</max>
+            <resolution>0.015000</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="caretta_laserscan" filename="libgazebo_ros_ray_sensor.so">
+          <ros>
+            <!-- <namespace></namespace> -->
+            <remapping>~/out:=scan</remapping>
+          </ros>
+          <output_type>sensor_msgs/LaserScan</output_type>
+          <frame_name>base_scan</frame_name>
+        </plugin>
+      </sensor>
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>imu_link</child>
+    </joint>
+    <link name="imu_link">
+      <pose>-0.056 0.078 0.07385 0 0 0</pose>
+      <collision name='imu_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.04 0.03 0.0016</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="imu_link_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.04 0.03 0.0016</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Purple</name>
+          </script>
+        </material>
+      </visual>
+      <sensor name="imu_link_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
+        <imu>
+          <angular_velocity>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </z>
+          </linear_acceleration>
+        </imu>
+        <plugin name="caretta_imu" filename="libgazebo_ros_imu_sensor.so">
+          <ros>
+            <!-- <namespace></namespace> -->
+            <remapping>~/out:=imu</remapping>
+          </ros>
+        </plugin>
+      </sensor>
+    </link>
+
+    <plugin name="caretta_diff_drive" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <!-- <namespace></namespace> -->
+      </ros>
+      <update_rate>30</update_rate>
+      <left_joint>wheel_left_joint</left_joint>
+      <right_joint>wheel_right_joint</right_joint>
+      <wheel_separation>0.184</wheel_separation>
+      <wheel_diameter>0.0685</wheel_diameter>
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+      <command_topic>cmd_vel</command_topic>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+    </plugin>
+    <plugin name="caretta_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <!-- <namespace></namespace> -->
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>30</update_rate>
+      <joint_name>wheel_left_joint</joint_name>
+      <joint_name>wheel_right_joint</joint_name>
+    </plugin>
+  </model>
+</sdf>

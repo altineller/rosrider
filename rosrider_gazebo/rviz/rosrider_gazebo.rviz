@@ -63,7 +63,7 @@ Visualization Manager:
           Value: true
         wheel_right_link:
           Value: true
-      Marker Scale: 0.10000000149011612
+      Marker Scale: 0.20000000298023224
       Name: TF
       Show Arrows: true
       Show Axes: true
@@ -93,7 +93,7 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz_default_plugins/LaserScan
-      Color: 115; 210; 22
+      Color: 239; 41; 41
       Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
@@ -248,25 +248,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 4.903660774230957
+      Distance: 1.5254175662994385
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.08012185990810394
-        Y: 0.3232896029949188
-        Z: -0.18834781646728516
+        X: 0.026767227798700333
+        Y: 0.07570422440767288
+        Z: -0.02140713669359684
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8253980278968811
+      Pitch: 0.5853983163833618
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 1.6604067087173462
+      Yaw: 1.58540678024292
     Saved:
       - Class: rviz_default_plugins/Orbit
         Distance: 5

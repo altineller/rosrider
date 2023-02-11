@@ -48,7 +48,6 @@ void ROSRiderDrive::odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg) 
 
 void ROSRiderDrive::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
   uint16_t scan_angle[3] = {0, 30, 330};
-
   for (int num = 0; num < 3; num++) {
     if (std::isinf(msg->ranges.at(scan_angle[num]))) {
       scan_data_[num] = msg->range_max;

@@ -37,10 +37,10 @@
         </constraints>
       </ode>
     </physics>
-    <model name="box_world">
+    <model name="lab01">
       <static>1</static>
       <include>
-        <uri>model://box_world</uri>
+        <uri>model://lab01</uri>
       </include>
     </model>
   </world>
