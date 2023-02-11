@@ -8,26 +8,21 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    config = os.path.join(get_package_share_directory('rosrider_node'), 'config', 'rosrider.yaml')
+    config = os.path.join(get_package_share_directory('rosrider_node'), 'param', 'rosrider.yaml')
 
-    rosrider_node = Node(
-        package='rosrider_node',
-        executable='rosrider_node',
-        name='rosrider_node',
-        output='screen',
-        emulate_tty=True,
-        parameters=[config]
-    )
+    urdf = os.path.join(get_package_share_directory('rosrider_gazebo'), 'urdf', ROBOT_MODEL + '.urdf')
 
-    service_node = Node(
-        package='rosrider_services',
-        executable='service',
-        name='service',
-        output='screen',
-        emulate_tty=True,
-        parameters=[config]
-    )
+    rosrider_node = Node(package='rosrider_node', executable='rosrider_node', name='rosrider_node',
+                         output='screen', emulate_tty=True, parameters=[config])
 
+    service_node = Node(package='rosrider_services', executable='service', name='service',
+                        output='screen', emulate_tty=True, parameters=[config])
+
+    # TODO make configurable or even another
+    state_publisher_node =  Node(package='robot_state_publisher', executable='robot_state_publisher', name='robot_state_publisher',
+                                 output='screen', parameters=[config], arguments=[urdf])
+
+    ld.add_action(state_publisher_node)
     ld.add_action(rosrider_node)
     ld.add_action(service_node)
 

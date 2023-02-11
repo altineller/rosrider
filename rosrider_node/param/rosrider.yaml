@@ -3,7 +3,7 @@ rosrider_node:
     I2C_ENABLED: True
     UPDATE_RATE: 10
     WHEEL_DIA: 0.0685
-    BASE_WIDTH: 0.185
+    BASE_WIDTH: 0.184
     MAX_RPM: 90.0
     ENCODER_PPR: 48
     GEAR_RATIO: 65.0

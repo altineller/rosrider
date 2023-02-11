@@ -240,7 +240,7 @@
       </axis>
     </joint>
     <link name="base_scan">
-      <pose>-0.063 0 0.08625 0 0 0</pose>
+      <pose>-0.063 0 0.104 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <inertia>
