@@ -71,12 +71,12 @@
   <joint name="caster_back_joint" type="fixed">
     <parent link="base_link"/>
     <child link="caster_back_link"/>
-    <origin xyz="-0.09 0 -0.02475" rpy="0 0 0"/>
+    <origin xyz="-0.09 0 -0.02425" rpy="0 0 0"/>
   </joint>
   <link name="caster_back_link">
     <visual>
       <geometry>
-        <sphere radius="0.0095"/>
+        <sphere radius="0.01"/>
       </geometry>
       <material name="white"/>
     </visual>
