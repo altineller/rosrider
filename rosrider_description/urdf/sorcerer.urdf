@@ -31,7 +31,7 @@
     <visual>
       <origin xyz="0 0 0.0136" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://rosrider_description/models/common/meshes/sorcerer.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://rosrider_description/meshes/sorcerer.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="yellow"/>
     </visual>
@@ -46,7 +46,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://rosrider_description/models/common/meshes/wheel_left.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://rosrider_description/meshes/wheel_left.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -62,7 +62,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://rosrider_description/models/common/meshes/wheel_right.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://rosrider_description/meshes/wheel_right.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
