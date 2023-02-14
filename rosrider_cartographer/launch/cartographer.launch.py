@@ -14,7 +14,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     rosrider_cartographer_prefix = get_package_share_directory('rosrider_cartographer')
     cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=os.path.join(rosrider_cartographer_prefix, 'config'))
-    configuration_basename = LaunchConfiguration('configuration_basename', default='turtlebot3_lds_2d.lua')
+    configuration_basename = LaunchConfiguration('configuration_basename', default='rosrider_2d.lua')
 
     # TODO: P3
 

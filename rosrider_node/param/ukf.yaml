@@ -1,0 +1,6 @@
+ukf_filter_node:
+    ros__parameters:
+        # TODO: copy from ekf
+        alpha: 0.001
+        kappa: 0.0
+        beta: 2.0

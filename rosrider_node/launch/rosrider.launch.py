@@ -6,9 +6,11 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
+    ROBOT_MODEL = os.environ['ROBOT_MODEL']
+
     ld = LaunchDescription()
 
-    config = os.path.join(get_package_share_directory('rosrider_node'), 'param', 'rosrider.yaml')
+    config = os.path.join(get_package_share_directory('rosrider_node'), 'param', ROBOT_MODEL + '.yaml')
 
     urdf = os.path.join(get_package_share_directory('rosrider_description'), 'urdf', ROBOT_MODEL + '.urdf')
 
