@@ -343,7 +343,7 @@
       </visual>
       <sensor name="imu_link_sensor" type="imu">
         <always_on>true</always_on>
-        <update_rate>50</update_rate>
+        <update_rate>60</update_rate>
         <imu>
           <angular_velocity>
             <x>
@@ -402,7 +402,7 @@
       <update_rate>30</update_rate>
       <left_joint>wheel_left_joint</left_joint>
       <right_joint>wheel_right_joint</right_joint>
-      <wheel_separation>0.184</wheel_separation>
+      <wheel_separation>0.1</wheel_separation>
       <wheel_diameter>0.0685</wheel_diameter>
       <max_wheel_torque>20</max_wheel_torque>
       <max_wheel_acceleration>1.0</max_wheel_acceleration>

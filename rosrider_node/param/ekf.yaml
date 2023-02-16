@@ -3,9 +3,9 @@ ekf_filter_node:
         frequency: 20.0
         sensor_timeout: 0.1
         two_d_mode: true
-        transform_time_offset: 0.0 # TODO: -0.01
+        transform_time_offset: 0.0 # TODO -0.01
         transform_timeout: 0.0
-        print_diagnostics: false
+        print_diagnostics: true
         debug: false
         debug_out_file: /tmp/ekf_debug.txt
         permit_corrected_publication: false
@@ -16,56 +16,40 @@ ekf_filter_node:
         base_link_frame: base_footprint
         world_frame: odom
         odom0: odom
-        # x, y, z
-        # roll, pitch, yaw
-        # vx, vy, vz
-        # vroll, vpitch, vyaw
-        # ax, ay, az.
-        #
-        # [vx, vy, vyaw] are used for odom0
-        #odom0_config: [false, false, false,
-        #               false, false, false,
-        #               true,  true,  false,
-        #               false, false, true,
-        #               false, false, false]
+        # The order of the values is x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az.
+        # [vx, vy, vyaw]
+        odom0_config: [false, false, false,
+                       false, false, false,
+                       true,  true,  false,
+                       false, false, true,
+                       false, false, false]
 
-        # [vx, vyaw]
-        odom0_config: [ false, false, false,
-                        false, false, false,
-                        true,  false, false,
-                        false, false, true,
-                        false, false, false ]
-
-        odom0_queue_size: 2
+        odom0_queue_size: 3
         odom0_nodelay: false
         odom0_differential: false
         odom0_relative: false
-        odom0_pose_rejection_threshold: 5.0
-        odom0_twist_rejection_threshold: 1.0
+
+        odom0_pose_rejection_threshold: 6.283185  # 2 PI
+        odom0_twist_rejection_threshold: 4.712388 # 3/2 PI
 
         imu0: imu/data
-
+        # The order of the values is x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az.
         # [roll, pitch, yaw, vyaw, ax]
-        #imu0_config: [false, false, false,
-        #              true,  true,  true,
-        #              false, false, false,
-        #              false, false, true,
-        #              true, false, false]
-
-        # [roll, pitch, vroll, vpitch, vyaw, ax]
-        imu0_config: [ false, false, false,
-                       true,  true,  false,
-                       false, false, false,
-                       true,  true,  true,
-                       true,  false, false ]
+        imu0_config: [false, false, false,
+                      true,  true,  true,
+                      false, false, false,
+                      false, false, true,
+                      true, false, false]
 
         imu0_nodelay: false
         imu0_differential: false
         imu0_relative: true
-        imu0_queue_size: 5
-        imu0_pose_rejection_threshold: 0.8
-        imu0_twist_rejection_threshold: 0.8
-        imu0_linear_acceleration_rejection_threshold: 0.8
+        imu0_queue_size: 6
+
+        imu0_pose_rejection_threshold: 6.283185  # 2 PI
+        imu0_twist_rejection_threshold: 6.283185  # 2 PI
+        imu0_linear_acceleration_rejection_threshold: 9.81 # 1G
+
         imu0_remove_gravitational_acceleration: true
 
         use_control: true

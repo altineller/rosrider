@@ -73,18 +73,17 @@ Visualization Manager:
       Tree:
         odom:
           base_footprint:
-            {}
-          base_link:
-            base_scan:
-              {}
-            caster_back_link:
-              {}
-            imu_link:
-              {}
-            wheel_left_link:
-              {}
-            wheel_right_link:
-              {}
+            base_link:
+              base_scan:
+                {}
+              caster_back_link:
+                {}
+              imu_link:
+                {}
+              wheel_left_link:
+                {}
+              wheel_right_link:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -292,47 +291,22 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz_default_plugins/Orbit
-      Distance: 1.5254175662994385
+      Angle: 0
+      Class: rviz_default_plugins/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Focal Point:
-        X: 0.026767227798700333
-        Y: 0.07570422440767288
-        Z: -0.02140713669359684
-      Focal Shape Fixed Size: false
-      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5853983163833618
+      Scale: 150
       Target Frame: <Fixed Frame>
-      Value: Orbit (rviz_default_plugins)
-      Yaw: 1.58540678024292
-    Saved:
-      - Class: rviz_default_plugins/Orbit
-        Distance: 5
-        Enable Stereo Rendering:
-          Stereo Eye Separation: 0.05999999865889549
-          Stereo Focal Distance: 1
-          Swap Stereo Eyes: false
-          Value: false
-        Focal Point:
-          X: 0
-          Y: 0
-          Z: 0
-        Focal Shape Fixed Size: false
-        Focal Shape Size: 0.05000000074505806
-        Invert Z Axis: false
-        Name: Orbit
-        Near Clip Distance: 0.009999999776482582
-        Pitch: 0.7853981852531433
-        Target Frame: <Fixed Frame>
-        Value: Orbit (rviz_default_plugins)
-        Yaw: 0.7853981852531433
+      Value: TopDownOrtho (rviz_default_plugins)
+      X: 0
+      Y: 0
+    Saved: ~
 Window Geometry:
   Displays:
     collapsed: false

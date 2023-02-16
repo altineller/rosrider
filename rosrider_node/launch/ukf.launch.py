@@ -7,7 +7,6 @@ from launch.substitutions import EnvironmentVariable
 import pathlib
 import launch.actions
 from launch.actions import DeclareLaunchArgument
-
 def generate_launch_description():
     return LaunchDescription([
         launch_ros.actions.Node(
