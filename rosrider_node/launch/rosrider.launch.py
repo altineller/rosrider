@@ -20,7 +20,6 @@ def generate_launch_description():
     service_node = Node(package='rosrider_services', executable='service', name='service',
                         output='screen', emulate_tty=True, parameters=[config])
 
-    # TODO make configurable or even another
     state_publisher_node =  Node(package='robot_state_publisher', executable='robot_state_publisher', name='robot_state_publisher',
                                  output='screen', parameters=[config], arguments=[urdf])
 
